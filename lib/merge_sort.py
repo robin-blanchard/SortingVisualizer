@@ -18,5 +18,3 @@ def merge_lists(K,L):
     else:
         R.extend(K)
     return R
-
-print(merge_sort([1,3,1,2,19,7,16,2,32,4]))
