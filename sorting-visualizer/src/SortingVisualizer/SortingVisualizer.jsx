@@ -4,13 +4,14 @@ import Button from 'react-bootstrap/Button';
 
 import {get_animations_insertion_sort} from './InsertionSort.js'
 import {get_animations_bubble_sort} from './BubbleSort.js'
+import {quick_sort_hoare} from './QuickSortHoare.js'
 import './SortingVisualizer.css'
 
-const ARRAY_LENGTH=10;
+const ARRAY_LENGTH=100;
 const ARRAY_MIN=5;
 const ARRAY_MAX=100;
 
-const SORTING_SPEED=500;
+const SORTING_SPEED=50;
 
 export default class SortingVisualizer extends React.Component{
     constructor(props) {
@@ -36,13 +37,15 @@ export default class SortingVisualizer extends React.Component{
                 <Button onClick={() => this.generate_new_array(ARRAY_LENGTH, ARRAY_MIN, ARRAY_MAX)}>Generate new array</Button>
                 <Button onClick={() => this.insertionSort()}>Insertion Sort</Button>
                 <Button onClick={() => this.bubbleSort()}>Bubble Sort</Button>
+                <Button onClick={() => this.quickSort()}>Quick Sort (Hoare)</Button>
 
                 </div>
             )
     }
     
     generate_new_array(len, min, max) {
-        var array = []
+        // var array = [65, 14, 96, 28, 7, 48, 64, 97, 89, 7];
+        var array = [];
         for (var i = 0; i<len; i++){
             array.push(Math.round(ARRAY_MIN + (ARRAY_MAX-ARRAY_MIN)*Math.random()))
         }
@@ -52,7 +55,7 @@ export default class SortingVisualizer extends React.Component{
 
     changeColor(idx_arr, color){
         var current_color = this.state.color.slice();
-        idx_arr.forEach(function(idx){current_color[idx] = color});
+        idx_arr.forEach(function(idx, c=0){current_color[idx] = color[c++]});
         this.setState({color: current_color});
     }
 
@@ -71,7 +74,7 @@ export default class SortingVisualizer extends React.Component{
             var [i,j] = animations[k];
             setTimeout(
                 function (i,j){
-                    this.changeColor([i,j], "red");
+                    this.changeColor([i,j], ["red","red"]);
                 }.bind(this, i, j),
                 k*SORTING_SPEED
             )
@@ -82,7 +85,7 @@ export default class SortingVisualizer extends React.Component{
             )
             setTimeout(
                 function (i,j){
-                    this.changeColor([i,j], "turquoise");
+                    this.changeColor([i,j], ["turquoise","turquoise"]);
                 }.bind(this, i, j), (k+2/3)*SORTING_SPEED
             )
         }
@@ -95,7 +98,7 @@ export default class SortingVisualizer extends React.Component{
             var [i,j,toswap] = animations[k];
             setTimeout(
                 function (i,j,toswap){
-                    this.changeColor([i,j], toswap ? "red" : "green");
+                    this.changeColor([i,j], toswap ? ["red","red"] : ["green","green"]);
                 }.bind(this, i, j, toswap),
                 k*SORTING_SPEED
             )
@@ -108,9 +111,58 @@ export default class SortingVisualizer extends React.Component{
             }
             setTimeout(
                 function (i,j){
-                    this.changeColor([i,j], "turquoise");
+                    this.changeColor([i,j], ["turquoise","turquoise"]);
                 }.bind(this, i, j), (k+2/3)*SORTING_SPEED
             )
         }
+    }
+
+    quickSort(){
+        var current_array = this.state.array.slice();
+        var animations = [];
+        [current_array, animations] = quick_sort_hoare(current_array, 0, current_array.length-1, animations);
+        console.log(animations);
+        var last_p, last_i, last_j = -1
+        for (var k = 0; k<animations.length; k++){
+            var [p,i,j,toswap] = animations[k];
+            setTimeout(
+                function(p, last_p){
+                    if (p!=last_p){
+                        this.changeColor([last_p, p], ["turquoise","orange"]);
+                    }
+                }.bind(this, p, last_p),
+                k*SORTING_SPEED
+            )
+            setTimeout(
+                function (last_i, last_j, i, j, last_p, p, toswap){
+                    if (last_i==last_p && last_p==p){
+                        this.changeColor([last_i, last_j], ["orange", "turquoise"]);
+                    } else if (last_j==last_p && last_p==p){
+                        this.changeColor([last_i, last_j], ["turquoise", "orange"]);
+                    } else {
+                        this.changeColor([last_i, last_j], ["turquoise", "turquoise"]);
+                    }
+                    this.changeColor([i,j], toswap ? ["red","red"] : ["green","green"]);
+                }.bind(this, last_i, last_j, i, j, last_p, p, toswap),
+                k*SORTING_SPEED
+            )
+            if (toswap){
+                setTimeout(
+                    function (i,j){
+                        this.swapValues(i,j)
+                    }.bind(this, i, j), (k+1/2)*SORTING_SPEED
+                )
+            }
+            last_i=i;
+            last_j=j;
+            last_p=p;
+        }
+        setTimeout(
+            function(){
+                this.setState({color : current_array.map(number => 'turquoise')});
+            }.bind(this),
+            animations.length * SORTING_SPEED
+        );
+        
     }
 }
