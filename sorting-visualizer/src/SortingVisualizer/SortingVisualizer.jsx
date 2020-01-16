@@ -50,6 +50,20 @@ export default class SortingVisualizer extends React.Component{
         this.setState({array: array, color: color});
     }
 
+    changeColor(idx_arr, color){
+        var current_color = this.state.color.slice();
+        idx_arr.forEach(function(idx){current_color[idx] = color});
+        this.setState({color: current_color});
+    }
+
+    swapValues(i, j){
+        var current_array = this.state.array.slice();
+        var tmp = current_array[i];
+        current_array[i] = current_array[j];
+        current_array[j] = tmp;
+        this.setState({array: current_array});
+    }
+
     insertionSort(){
         var current_array = this.state.array.slice();
         var animations = get_animations_insertion_sort(current_array);
@@ -98,19 +112,5 @@ export default class SortingVisualizer extends React.Component{
                 }.bind(this, i, j), (k+2/3)*SORTING_SPEED
             )
         }
-    }
-
-    changeColor(idx_arr, color){
-        var current_color = this.state.color.slice();
-        idx_arr.forEach(function(idx){current_color[idx] = color});
-        this.setState({color: current_color});
-    }
-
-    swapValues(i, j){
-        var current_array = this.state.array.slice();
-        var tmp = current_array[i];
-        current_array[i] = current_array[j];
-        current_array[j] = tmp;
-        this.setState({array: current_array});
     }
 }
