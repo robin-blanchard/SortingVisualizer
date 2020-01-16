@@ -1,0 +1,9 @@
+.container{
+    display: flex;
+
+}
+
+.rectangle{
+    margin-left: 1px;
+    margin-right: 1px;
+}
