@@ -3,7 +3,7 @@ import Rectangle from './Rectangle.jsx'
 import Button from 'react-bootstrap/Button';
 
 import {get_animations_insertion_sort} from './InsertionSort.js'
-
+import {get_animations_bubble_sort} from './BubbleSort.js'
 import './SortingVisualizer.css'
 
 const ARRAY_LENGTH=10;
@@ -35,6 +35,8 @@ export default class SortingVisualizer extends React.Component{
                 </div>
                 <Button onClick={() => this.generate_new_array(ARRAY_LENGTH, ARRAY_MIN, ARRAY_MAX)}>Generate new array</Button>
                 <Button onClick={() => this.insertionSort()}>Insertion Sort</Button>
+                <Button onClick={() => this.bubbleSort()}>Bubble Sort</Button>
+
                 </div>
             )
     }
@@ -72,10 +74,35 @@ export default class SortingVisualizer extends React.Component{
         }
     }
 
+    bubbleSort(){
+        var current_array = this.state.array.slice();
+        var animations = get_animations_bubble_sort(current_array);
+        for (var k = 0; k<animations.length; k++){
+            var [i,j,toswap] = animations[k];
+            setTimeout(
+                function (i,j,toswap){
+                    this.changeColor([i,j], toswap ? "red" : "green");
+                }.bind(this, i, j, toswap),
+                k*SORTING_SPEED
+            )
+            if (toswap){
+                setTimeout(
+                    function (i,j){
+                        this.swapValues(i,j)
+                    }.bind(this, i, j), (k+1/3)*SORTING_SPEED
+                )
+            }
+            setTimeout(
+                function (i,j){
+                    this.changeColor([i,j], "turquoise");
+                }.bind(this, i, j), (k+2/3)*SORTING_SPEED
+            )
+        }
+    }
+
     changeColor(idx_arr, color){
         var current_color = this.state.color.slice();
         idx_arr.forEach(function(idx){current_color[idx] = color});
-        //current_color[idx] = color;
         this.setState({color: current_color});
     }
 
