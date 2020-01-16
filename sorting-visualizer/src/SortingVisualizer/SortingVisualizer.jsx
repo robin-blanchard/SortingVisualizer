@@ -17,6 +17,11 @@ const ARRAY_MAX=100;
 
 const SORTING_SPEED=50;
 
+const BASE_COLOR="turquoise";
+const WRONG_COLOR="red";
+const CORRECT_COLOR="green";
+const PIVOT_COLOR="orange";
+
 export default class SortingVisualizer extends React.Component{
     constructor(props) {
         super(props);
@@ -59,7 +64,7 @@ export default class SortingVisualizer extends React.Component{
         for (var i = 0; i<len; i++){
             array.push(Math.round(ARRAY_MIN + (ARRAY_MAX-ARRAY_MIN)*Math.random()))
         }
-        var color = array.map(number => 'turquoise')
+        var color = array.map(number => BASE_COLOR);
         this.setState({array: array, color: color});
     }
 
@@ -84,7 +89,7 @@ export default class SortingVisualizer extends React.Component{
             var [i,j] = animations[k];
             setTimeout(
                 function (i,j){
-                    this.changeColor([i,j], ["red","red"]);
+                    this.changeColor([i,j], [WRONG_COLOR, WRONG_COLOR]);
                 }.bind(this, i, j),
                 k*SORTING_SPEED
             )
@@ -95,7 +100,7 @@ export default class SortingVisualizer extends React.Component{
             )
             setTimeout(
                 function (i,j){
-                    this.changeColor([i,j], ["turquoise","turquoise"]);
+                    this.changeColor([i,j], [BASE_COLOR, BASE_COLOR]);
                 }.bind(this, i, j), (k+2/3)*SORTING_SPEED
             )
         }
@@ -108,7 +113,7 @@ export default class SortingVisualizer extends React.Component{
             var [i,j,toswap] = animations[k];
             setTimeout(
                 function (i,j,toswap){
-                    this.changeColor([i,j], toswap ? ["red","red"] : ["green","green"]);
+                    this.changeColor([i,j], toswap ? [WRONG_COLOR,WRONG_COLOR] : [CORRECT_COLOR,CORRECT_COLOR]);
                 }.bind(this, i, j, toswap),
                 k*SORTING_SPEED
             )
@@ -121,7 +126,7 @@ export default class SortingVisualizer extends React.Component{
             }
             setTimeout(
                 function (i,j){
-                    this.changeColor([i,j], ["turquoise","turquoise"]);
+                    this.changeColor([i,j], [BASE_COLOR, BASE_COLOR]);
                 }.bind(this, i, j), (k+2/3)*SORTING_SPEED
             )
         }
@@ -131,29 +136,30 @@ export default class SortingVisualizer extends React.Component{
         var current_array = this.state.array.slice();
         var animations = [];
         [current_array, animations] = quick_sort_hoare(current_array, 0, current_array.length-1, animations);
-        console.log(animations);
         var last_p, last_i, last_j = -1
         for (var k = 0; k<animations.length; k++){
             var [p,i,j,toswap] = animations[k];
             setTimeout(
                 function(p, last_p){
                     if (p!=last_p){
-                        this.changeColor([last_p, p], ["turquoise","orange"]);
+                        this.changeColor([last_p, p], [BASE_COLOR,PIVOT_COLOR]);
                     }
                 }.bind(this, p, last_p),
                 k*SORTING_SPEED
             )
             setTimeout(
-                function (last_i, last_j, i, j, last_p, p, toswap){
+                function (current_array, last_i, last_j, i, j, last_p, p, toswap){
                     if (last_i==last_p && last_p==p){
-                        this.changeColor([last_i, last_j], ["orange", "turquoise"]);
+                        this.changeColor([last_i, last_j], [PIVOT_COLOR, BASE_COLOR]);
                     } else if (last_j==last_p && last_p==p){
-                        this.changeColor([last_i, last_j], ["turquoise", "orange"]);
+                        this.changeColor([last_i, last_j], [BASE_COLOR, PIVOT_COLOR]);
                     } else {
-                        this.changeColor([last_i, last_j], ["turquoise", "turquoise"]);
+                        this.changeColor([last_i, last_j], [BASE_COLOR, BASE_COLOR]);
                     }
-                    this.changeColor([i,j], toswap ? ["red","red"] : ["green","green"]);
-                }.bind(this, last_i, last_j, i, j, last_p, p, toswap),
+                    this.changeColor([i,j], (toswap && current_array[i]!=current_array[j]) ? //Hoare quick sort does useless swaps
+                                                                                             // when values are the same, CORRECT_COL wanted
+                                            [WRONG_COLOR,WRONG_COLOR] : [CORRECT_COLOR,CORRECT_COLOR]);
+                }.bind(this, current_array, last_i, last_j, i, j, last_p, p, toswap),
                 k*SORTING_SPEED
             )
             if (toswap){
