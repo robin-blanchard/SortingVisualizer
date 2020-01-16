@@ -1,11 +1,15 @@
 import React from 'react';
 import Rectangle from './Rectangle.jsx'
 import Button from 'react-bootstrap/Button';
+import Navbar from 'react-bootstrap/Navbar'
+import Nav from 'react-bootstrap/Nav'
 
 import {get_animations_insertion_sort} from './InsertionSort.js'
 import {get_animations_bubble_sort} from './BubbleSort.js'
 import {quick_sort_hoare} from './QuickSortHoare.js'
+
 import './SortingVisualizer.css'
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const ARRAY_LENGTH=100;
 const ARRAY_MIN=5;
@@ -27,19 +31,25 @@ export default class SortingVisualizer extends React.Component{
     }
 
     render(){
-        return (<div>
-                <div className="arrayContainer" style={{ background: '#9e9e9e', width: '80vw', height: '80vh' }}>
-                    {this.state.array.map((number,idx) =>
-                            (<Rectangle key={idx} color={this.state.color[idx]} height={Math.round(100*number/ARRAY_MAX)} 
-                            width={Math.round(100/ARRAY_LENGTH)} value={ARRAY_LENGTH<=10 ? number : ""}></Rectangle>)
-                    )}
-                </div>
-                <Button onClick={() => this.generate_new_array(ARRAY_LENGTH, ARRAY_MIN, ARRAY_MAX)}>Generate new array</Button>
-                <Button onClick={() => this.insertionSort()}>Insertion Sort</Button>
-                <Button onClick={() => this.bubbleSort()}>Bubble Sort</Button>
-                <Button onClick={() => this.quickSort()}>Quick Sort (Hoare)</Button>
+        return (
+        <div>
+            <Navbar bg="light" expand="lg">
+            <Navbar.Brand>Sorting Visualizer</Navbar.Brand>
+            <Nav className="mx-auto">
+                <Button className="mx-1" onClick={() => this.generate_new_array(ARRAY_LENGTH, ARRAY_MIN, ARRAY_MAX)}>Generate new array</Button>
+                <Button className="mx-1" onClick={() => this.insertionSort()}>Insertion Sort</Button>
+                <Button className="mx-1" onClick={() => this.bubbleSort()}>Bubble Sort</Button>
+                <Button className="mx-1" onClick={() => this.quickSort()}>Quick Sort (Hoare)</Button>
+            </Nav>
+            </Navbar>
+            <div className="d-flex mx-auto" style={{ background: '#9e9e9e', width: '80vw', height: '80vh' }}>
+                {this.state.array.map((number,idx) =>
+                        (<Rectangle key={idx} color={this.state.color[idx]} height={Math.round(100*number/ARRAY_MAX)} 
+                        width={Math.round(100/ARRAY_LENGTH)} value={ARRAY_LENGTH<=10 ? number : ""}></Rectangle>)
+                )}
+            </div>                
 
-                </div>
+        </div>
             )
     }
     
