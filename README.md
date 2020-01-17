@@ -4,8 +4,10 @@ This repository has two objectives:
 * First, implement various sorting algorithms in Python and create an executable.
 * Second, create a sorting visualize in ReactJS
 
+Demo : https://robblanchard.github.io/SortingVisualizer/
+
 TO DO:
-* Deploy GitHub page https://github.com/gitname/react-gh-pages
+* Deploy GitHub page https://create-react-app.dev/docs/deployment/#github-pages DONE
 * Add other sorting algorithms
     * Merge Sort
     * Classic quick sort
