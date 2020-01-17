@@ -9,7 +9,7 @@ TO DO:
 * Add other sorting algorithms
     * Merge Sort
     * Classic quick sort
-* Modify Insertion Sort visualisation
+* Modify Insertion Sort visualisation DONE
     * Add non-swapping comparison
     * Add changes to visualisation
 * Update README with instructions

@@ -74,6 +74,11 @@ export default class SortingVisualizer extends React.Component{
         this.setState({color: current_color});
     }
 
+    resetColor(){
+        var current_color = this.state.color.slice();
+        this.setState({color: current_color.map(c => BASE_COLOR)});
+    }
+
     swapValues(i, j){
         var current_array = this.state.array.slice();
         var tmp = current_array[i];
@@ -85,25 +90,69 @@ export default class SortingVisualizer extends React.Component{
     insertionSort(){
         var current_array = this.state.array.slice();
         var animations = get_animations_insertion_sort(current_array);
+        var last_p, last_min_idx, last_j;
+
         for (var k = 0; k<animations.length; k++){
-            var [i,j] = animations[k];
-            setTimeout(
-                function (i,j){
-                    this.changeColor([i,j], [WRONG_COLOR, WRONG_COLOR]);
-                }.bind(this, i, j),
-                k*SORTING_SPEED
-            )
-            setTimeout(
-                function (i,j){
-                    this.swapValues(i,j)
-                }.bind(this, i, j), (k+1/3)*SORTING_SPEED
-            )
-            setTimeout(
-                function (i,j){
-                    this.changeColor([i,j], [BASE_COLOR, BASE_COLOR]);
-                }.bind(this, i, j), (k+2/3)*SORTING_SPEED
-            )
+            var [p, min_idx, j, status] = animations[k];
+
+            //If pivot changes
+            if (p!=last_p){
+                setTimeout(
+                    function (p, last_p){
+                        this.resetColor();
+                        this.changeColor([p, last_p], [PIVOT_COLOR, BASE_COLOR]);
+                    }.bind(this, p, last_p),
+                    k*SORTING_SPEED
+                )
+            }
+
+            //If min_idx changes
+            if (last_min_idx!= min_idx && last_min_idx!=p){
+                setTimeout(
+                    function (last_min_idx){
+                        this.changeColor([last_min_idx], [BASE_COLOR]);
+                    }.bind(this, last_min_idx),
+                    (k+1)*SORTING_SPEED
+                );
+            }
+
+            //If comparison
+            if (!status){
+                setTimeout(
+                    function(last_j, j, min_idx){
+                        if (last_j==min_idx){
+                            this.changeColor([last_j, j], [PIVOT_COLOR, CORRECT_COLOR]);
+                        } else {
+                            this.changeColor([last_j, j], [BASE_COLOR, CORRECT_COLOR]);
+                        }
+                    }.bind(this, last_j, j, min_idx),
+                    (k+1/3)*SORTING_SPEED
+                );
+
+            } else {    //If swapping
+
+                if (p!=min_idx){    // do swap only if useful
+                    setTimeout(
+                        function(p, min_idx){
+                            this.changeColor([p, min_idx], [WRONG_COLOR, WRONG_COLOR]);
+                            this.swapValues(p, min_idx);
+                        }.bind(this, p, min_idx, status),
+                        (k+2/3)*SORTING_SPEED
+                    )
+                }
+            }
+            last_p=p;
+            last_j=j;
+            last_min_idx=min_idx;
         }
+
+        setTimeout(
+            function(){
+                this.resetColor()
+            }.bind(this),
+            animations.length*SORTING_SPEED
+        );
+
     }
 
     bubbleSort(){
