@@ -80,7 +80,7 @@ export default class SortingVisualizer extends React.Component{
             <Container className="d-flex mx-auto" style={{ background: '#9e9e9e', width: '80vw', height: '80vh' }}>
                 {this.state.array.map((number,idx) =>
                         (<Rectangle key={idx} color={this.state.color[idx]} height={Math.round(100*number/ARRAY_MAX)} 
-                        width={Math.round(100/this.state.array_size)} value={this.state.array_size<=10 ? number : ""}></Rectangle>)
+                        width={100/this.state.array_size} value={this.state.array_size<=10 ? number : ""}></Rectangle>)
                 )}
             </Container>                
 
