@@ -13,4 +13,4 @@ TO DO:
     * Add non-swapping comparison
     * Add changes to visualisation
 * Update README with instructions
-* Add customizable array sizes and sorting speed
+* Add customizable array sizes and sorting speed DONE
