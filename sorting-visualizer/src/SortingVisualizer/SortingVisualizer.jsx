@@ -9,9 +9,10 @@ import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
 import InputRange from 'react-input-range'
 
-import {get_animations_insertion_sort} from './InsertionSort.js'
-import {get_animations_bubble_sort} from './BubbleSort.js'
-import {quick_sort_hoare} from './QuickSortHoare.js'
+import {get_animations_insertion_sort} from './InsertionSort.js';
+import {get_animations_bubble_sort} from './BubbleSort.js';
+import {quick_sort_hoare} from './QuickSortHoare.js';
+import {quick_sort_lomuto} from './QuickSortLomuto.js'
 
 import './SortingVisualizer.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -19,6 +20,8 @@ import 'react-input-range/lib/css/index.css'
 
 const ARRAY_MIN=5;
 const ARRAY_MAX=100;
+
+const MAX_SIZE_DISPLAY_NUM = 25;
 
 const BASE_COLOR="turquoise";
 const WRONG_COLOR="red";
@@ -31,7 +34,7 @@ export default class SortingVisualizer extends React.Component{
         this.state = {
             array : [],
             color : [],
-            speed : 0.021,
+            speed : 0.011,
             array_size : 10
         }
       }
@@ -49,7 +52,8 @@ export default class SortingVisualizer extends React.Component{
                 <Button className="mx-1 text-nowrap" onClick={() => this.handleGeneration(this.state.array_size, ARRAY_MIN, ARRAY_MAX)}>Generate new array</Button>
                 <Button className="mx-1 text-nowrap" onClick={() => this.handleInsertionSort()}>Insertion Sort</Button>
                 <Button className="mx-1 text-nowrap" onClick={() => this.handleBubbleSort()}>Bubble Sort</Button>
-                <Button className="mx-1 text-nowrap" onClick={() => this.handleQuickSort()}>Quick Sort (Hoare)</Button>
+                <Button className="mx-1 text-nowrap" onClick={() => this.handleQuickSortHoare()}>Quick Sort (Hoare)</Button>
+                <Button className="mx-1 text-nowrap" onClick={() => this.handleQuickSortLomuto()}>Quick Sort (Lomuto)</Button>
             </Nav>
             </Navbar>
             <Container style={{width: '50vw', height: '10vh' }}>
@@ -80,7 +84,7 @@ export default class SortingVisualizer extends React.Component{
             <Container className="d-flex mx-auto" style={{ background: '#9e9e9e', width: '80vw', height: '80vh' }}>
                 {this.state.array.map((number,idx) =>
                         (<Rectangle key={idx} color={this.state.color[idx]} height={Math.round(100*number/ARRAY_MAX)} 
-                        width={100/this.state.array_size} value={this.state.array_size<=10 ? number : ""}></Rectangle>)
+                        width={100/this.state.array_size} value={this.state.array_size<=MAX_SIZE_DISPLAY_NUM ? number : ""}></Rectangle>)
                 )}
             </Container>                
 
@@ -131,7 +135,7 @@ export default class SortingVisualizer extends React.Component{
             var [p, min_idx, j, status] = animations[k];
 
             //If pivot changes
-            if (p!=last_p){
+            if (p!==last_p){
                 setTimeout(
                     function (p, last_p){
                         this.resetColor();
@@ -142,7 +146,7 @@ export default class SortingVisualizer extends React.Component{
             }
 
             //If min_idx changes
-            if (last_min_idx!= min_idx && last_min_idx!=p){
+            if (last_min_idx!== min_idx && last_min_idx!==p){
                 setTimeout(
                     function (last_min_idx){
                         this.changeColor([last_min_idx], [BASE_COLOR]);
@@ -155,7 +159,7 @@ export default class SortingVisualizer extends React.Component{
             if (!status){
                 setTimeout(
                     function(last_j, j, min_idx){
-                        if (last_j==min_idx){
+                        if (last_j===min_idx){
                             this.changeColor([last_j, j], [PIVOT_COLOR, CORRECT_COLOR]);
                         } else {
                             this.changeColor([last_j, j], [BASE_COLOR, CORRECT_COLOR]);
@@ -166,7 +170,7 @@ export default class SortingVisualizer extends React.Component{
 
             } else {    //If swapping
 
-                if (p!=min_idx){    // do swap only if useful
+                if (p!==min_idx){    // do swap only if useful
                     setTimeout(
                         function(p, min_idx){
                             this.changeColor([p, min_idx], [WRONG_COLOR, WRONG_COLOR]);
@@ -216,7 +220,7 @@ export default class SortingVisualizer extends React.Component{
         }
     }
 
-    handleQuickSort(){
+    handleQuickSortHoare(){
         var current_array = this.state.array.slice();
         var animations = [];
         [current_array, animations] = quick_sort_hoare(current_array, 0, current_array.length-1, animations);
@@ -225,7 +229,7 @@ export default class SortingVisualizer extends React.Component{
             var [p,i,j,toswap] = animations[k];
             setTimeout(
                 function(p, last_p){
-                    if (p!=last_p){
+                    if (p!==last_p){
                         this.changeColor([last_p, p], [BASE_COLOR,PIVOT_COLOR]);
                     }
                 }.bind(this, p, last_p),
@@ -233,14 +237,14 @@ export default class SortingVisualizer extends React.Component{
             )
             setTimeout(
                 function (current_array, last_i, last_j, i, j, last_p, p, toswap){
-                    if (last_i==last_p && last_p==p){
+                    if (last_i===last_p && last_p===p){
                         this.changeColor([last_i, last_j], [PIVOT_COLOR, BASE_COLOR]);
-                    } else if (last_j==last_p && last_p==p){
+                    } else if (last_j===last_p && last_p===p){
                         this.changeColor([last_i, last_j], [BASE_COLOR, PIVOT_COLOR]);
                     } else {
                         this.changeColor([last_i, last_j], [BASE_COLOR, BASE_COLOR]);
                     }
-                    this.changeColor([i,j], (toswap && current_array[i]!=current_array[j]) ? //Hoare quick sort does useless swaps
+                    this.changeColor([i,j], (toswap && current_array[i]!==current_array[j]) ? //Hoare quick sort does useless swaps
                                                                                              // when values are the same, CORRECT_COL wanted
                                             [WRONG_COLOR,WRONG_COLOR] : [CORRECT_COLOR,CORRECT_COLOR]);
                 }.bind(this, current_array, last_i, last_j, i, j, last_p, p, toswap),
@@ -264,5 +268,64 @@ export default class SortingVisualizer extends React.Component{
             animations.length/this.state.speed
         );
         
+    }
+
+    handleQuickSortLomuto(){
+        var current_array = this.state.array.slice();
+        var animations = [];
+        quick_sort_lomuto(current_array, 0, current_array.length-1, animations);
+        var last_p, last_i, last_j;
+        for (var k=0; k<animations.length;k++){
+            var [p,i,j,toswap] = animations[k];
+
+            setTimeout(
+                function(p, last_p){
+                    if (p!==last_p){
+                        this.changeColor([last_p, p], [BASE_COLOR,PIVOT_COLOR]);
+                    }
+                }.bind(this, p, last_p),
+                k/this.state.speed
+            );
+            
+            if (i!==j){
+                setTimeout(
+                    function(last_i, last_j, i,j,toswap){
+                        if (toswap){
+                            this.changeColor([last_i, last_j, i,j], [BASE_COLOR, BASE_COLOR, CORRECT_COLOR, WRONG_COLOR]);
+                        } else {
+                            this.changeColor([last_i, last_j, i,j], [BASE_COLOR, BASE_COLOR, CORRECT_COLOR, CORRECT_COLOR]);
+                        }
+                    }.bind(this, last_i, last_j, i, j, toswap),
+                    (k+1/3)/this.state.speed
+                );
+    
+                setTimeout(
+                    function(i,j,toswap){
+                        if (toswap){
+                            this.swapValues(i,j);
+                        }
+                    }.bind(this, i, j, toswap),
+                    (k+2/3)/this.state.speed
+                );
+            } else {
+                setTimeout(
+                    function(last_i, last_j, i){
+                        this.changeColor([last_i, last_j, i], [BASE_COLOR, BASE_COLOR, CORRECT_COLOR]);
+                    }.bind(this, last_i, last_j, i),
+                    (k+1/2)/this.state.speed
+                );
+            }
+
+            last_p=p;
+            last_i=i;
+            last_j=j;
+
+        }
+        setTimeout(
+            function(last_i, last_j){
+                this.changeColor([last_i, last_j], [BASE_COLOR, BASE_COLOR]);
+            }.bind(this, last_i, last_j),
+            animations.length/this.state.speed
+        );
     }
 }
