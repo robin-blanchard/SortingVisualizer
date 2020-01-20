@@ -27,7 +27,8 @@ I made this project to get my hands on React programming.
 
 Python : 
 - [ ] Optimize sorting algorithms
-- [ ] Create an exectutable
+- [ ] Create an exectutable  
+
 React :
 - [x] Deploy GitHub page
 - [x] Merge Sort
