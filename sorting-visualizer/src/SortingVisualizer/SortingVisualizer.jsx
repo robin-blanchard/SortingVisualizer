@@ -52,8 +52,8 @@ export default class SortingVisualizer extends React.Component{
                 <Button className="mx-1 text-nowrap" onClick={() => this.handleGeneration(this.state.array_size, ARRAY_MIN, ARRAY_MAX)}>Generate new array</Button>
                 <Button className="mx-1 text-nowrap" onClick={() => this.handleInsertionSort()}>Insertion Sort</Button>
                 <Button className="mx-1 text-nowrap" onClick={() => this.handleBubbleSort()}>Bubble Sort</Button>
-                <Button className="mx-1 text-nowrap" onClick={() => this.handleQuickSortHoare()}>Quick Sort (Hoare)</Button>
                 <Button className="mx-1 text-nowrap" onClick={() => this.handleQuickSortLomuto()}>Quick Sort (Lomuto)</Button>
+                <Button className="mx-1 text-nowrap" onClick={() => this.handleQuickSortHoare()}>Quick Sort (Hoare)</Button>
             </Nav>
             </Navbar>
             <Container style={{width: '50vw', height: '10vh' }}>
