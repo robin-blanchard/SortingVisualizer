@@ -35,7 +35,8 @@ export default class SortingVisualizer extends React.Component{
             array : [],
             color : [],
             speed : 0.011,
-            array_size : 10
+            array_size : 10,
+            sorting : false
         }
       }
     
@@ -48,12 +49,25 @@ export default class SortingVisualizer extends React.Component{
         <Container fluid={true} className="fullSizeContainer">
             <Navbar bg="light" expand="lg">
             <Navbar.Brand>Sorting Visualizer</Navbar.Brand>
+            {this.state.sorting ? <Button id="stopButton" variant="danger" onClick={() => this.handleStop()}>Stop</Button> : null}
+
             <Nav className="mx-auto">
-                <Button className="mx-1 text-nowrap" onClick={() => this.handleGeneration(this.state.array_size, ARRAY_MIN, ARRAY_MAX)}>Generate new array</Button>
-                <Button className="mx-1 text-nowrap" onClick={() => this.handleInsertionSort()}>Insertion Sort</Button>
-                <Button className="mx-1 text-nowrap" onClick={() => this.handleBubbleSort()}>Bubble Sort</Button>
-                <Button className="mx-1 text-nowrap" onClick={() => this.handleQuickSortLomuto()}>Quick Sort (Lomuto)</Button>
-                <Button className="mx-1 text-nowrap" onClick={() => this.handleQuickSortHoare()}>Quick Sort (Hoare)</Button>
+                <Button className="mx-1 text-nowrap" 
+                        onClick={() => this.handleGeneration(this.state.array_size, ARRAY_MIN, ARRAY_MAX)}
+                        disabled={this.state.sorting}>Generate new array</Button>
+                <Button className="mx-1 text-nowrap" 
+                        onClick={() => this.handleInsertionSort()}
+                        disabled={this.state.sorting}>Insertion Sort</Button>
+                <Button className="mx-1 text-nowrap" 
+                        onClick={() => this.handleBubbleSort()}
+                        disabled={this.state.sorting}>Bubble Sort</Button>
+                <Button className="mx-1 text-nowrap" 
+                        onClick={() => this.handleQuickSortLomuto()}
+                        disabled={this.state.sorting}>Quick Sort (Lomuto)</Button>
+                <Button className="mx-1 text-nowrap" 
+                        onClick={() => this.handleQuickSortHoare()}
+                        disabled={this.state.sorting}>Quick Sort (Hoare)</Button>
+
             </Nav>
             </Navbar>
             <Container style={{width: '50vw', height: '10vh' }}>
@@ -65,6 +79,7 @@ export default class SortingVisualizer extends React.Component{
                         maxValue={200}
                         minValue={10}
                         value={this.state.array_size}
+                        disabled={this.state.sorting}
                         onChange={(array_size) => {this.handleArraySizeChange(array_size);}} />
                     </Col>
                     <Col>Speed
@@ -74,6 +89,7 @@ export default class SortingVisualizer extends React.Component{
                         maxValue={10}
                         minValue={0}
                         value={500*this.state.speed-0.5}
+                        disabled={this.state.sorting}
                         onChange={value => this.setState({ speed : (2*value+1)/1000 })} />
                     </Col>
                 </Row>
@@ -126,7 +142,9 @@ export default class SortingVisualizer extends React.Component{
     }
 
     handleInsertionSort(){
-        console.log(this.state.speed);
+        this.setState({sorting: true});
+        this.resetColor();
+
         var current_array = this.state.array.slice();
         var animations = get_animations_insertion_sort(current_array);
         var last_p, last_min_idx, last_j;
@@ -187,14 +205,17 @@ export default class SortingVisualizer extends React.Component{
 
         setTimeout(
             function(){
-                this.resetColor()
+                this.resetColor();
+                this.setState({sorting: false});
             }.bind(this),
             animations.length/this.state.speed
         );
-
     }
 
     handleBubbleSort(){
+        this.setState({sorting: true});
+        this.resetColor();
+
         var current_array = this.state.array.slice();
         var animations = get_animations_bubble_sort(current_array);
         for (var k = 0; k<animations.length; k++){
@@ -218,9 +239,20 @@ export default class SortingVisualizer extends React.Component{
                 }.bind(this, i, j), (k+2/3)/this.state.speed
             )
         }
+
+        setTimeout(
+            function(){
+                this.setState({sorting: false});
+            }.bind(this),
+            animations.length/this.state.speed
+        );
+
     }
 
     handleQuickSortHoare(){
+        this.setState({sorting: true});
+        this.resetColor();
+
         var current_array = this.state.array.slice();
         var animations = [];
         [current_array, animations] = quick_sort_hoare(current_array, 0, current_array.length-1, animations);
@@ -264,6 +296,7 @@ export default class SortingVisualizer extends React.Component{
         setTimeout(
             function(){
                 this.setState({color : current_array.map(number => 'turquoise')});
+                this.setState({sorting: false});
             }.bind(this),
             animations.length/this.state.speed
         );
@@ -271,6 +304,9 @@ export default class SortingVisualizer extends React.Component{
     }
 
     handleQuickSortLomuto(){
+        this.setState({sorting: true});
+        this.resetColor();
+        
         var current_array = this.state.array.slice();
         var animations = [];
         quick_sort_lomuto(current_array, 0, current_array.length-1, animations);
@@ -324,8 +360,18 @@ export default class SortingVisualizer extends React.Component{
         setTimeout(
             function(last_i, last_j){
                 this.changeColor([last_i, last_j], [BASE_COLOR, BASE_COLOR]);
+                this.setState({sorting: false});
             }.bind(this, last_i, last_j),
             animations.length/this.state.speed
         );
+
+    }
+
+    handleStop(){
+        var highestTimeoutId = setTimeout(";");
+        for (var i = 0 ; i < highestTimeoutId ; i++) {
+            clearTimeout(i); 
+        }
+        this.setState({sorting: false});
     }
 }
