@@ -14,8 +14,9 @@ export default class Rectangle extends React.Component{
         var styleParent = {
             position: "relative",
             width : this.props.width.toString()+"%",
-            height : "100%"
-            
+            height : "100%",
+            marginLeft: this.props.array_size<100 ? "1px" : "0px",
+            marginRight: this.props.array_size<100 ? "1px" : "0px"
         };
 
         return (

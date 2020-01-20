@@ -61,9 +61,9 @@ export default class SortingVisualizer extends React.Component{
                     <Col>Array Size
                         <InputRange
                         formatLabel={value => `${value}`}
-                        step={5}
-                        maxValue={100}
-                        minValue={5}
+                        step={10}
+                        maxValue={200}
+                        minValue={10}
                         value={this.state.array_size}
                         onChange={(array_size) => {this.handleArraySizeChange(array_size);}} />
                     </Col>
@@ -83,7 +83,7 @@ export default class SortingVisualizer extends React.Component{
             </Container>
             <Container className="d-flex mx-auto" style={{ background: '#9e9e9e', width: '80vw', height: '80vh' }}>
                 {this.state.array.map((number,idx) =>
-                        (<Rectangle key={idx} color={this.state.color[idx]} height={Math.round(100*number/ARRAY_MAX)} 
+                        (<Rectangle key={idx} array_size={this.state.array_size} color={this.state.color[idx]} height={Math.round(100*number/ARRAY_MAX)} 
                         width={100/this.state.array_size} value={this.state.array_size<=MAX_SIZE_DISPLAY_NUM ? number : ""}></Rectangle>)
                 )}
             </Container>                
