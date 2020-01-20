@@ -375,12 +375,47 @@ export default class SortingVisualizer extends React.Component{
     handleMergeSort(){
         this.setState({sorting: true});
         this.resetColor();
-        
+
         var current_array = this.state.array.slice();
         var animations = [];
-        console.log(merge_sort(current_array, 0, current_array.length, animations));
+        merge_sort(current_array, 0, this.state.array_size-1, animations);
+        for (var k = 0; k<animations.length; k++){
+            var [i,j,toswap] = animations[k];
+            setTimeout(
+                function (i,j,toswap){
+                    this.changeColor([i,j], toswap ? [WRONG_COLOR,WRONG_COLOR] : [CORRECT_COLOR,CORRECT_COLOR]);
+                }.bind(this, i, j, toswap),
+                k/this.state.speed
+            )
+            if (toswap){
+                setTimeout(
+                    function (i,j){
+                        this.changeColor([i,j,i+1], [WRONG_COLOR, BASE_COLOR, WRONG_COLOR]); //Order is important: j could be i+1
+                        this.moveJ2I(i,j);
+                    }.bind(this, i, j), (k+1/3)/this.state.speed
+                )
+            }
+            setTimeout(
+                function (i){
+                    this.changeColor([i,i+1], [BASE_COLOR, BASE_COLOR]);
+                }.bind(this, i), (k+2/3)/this.state.speed
+            )
+        }
 
-        this.setState({sorting: false})
+        setTimeout(
+            function(){
+                this.setState({sorting: false});
+            }.bind(this),
+            animations.length/this.state.speed
+        );
+    }
+
+    moveJ2I(i, j){
+        var current_array = this.state.array.slice();
+        var tmp = current_array[j];
+        current_array.splice(j, 1);
+        current_array.splice(i, 0, tmp);
+        this.setState({array: current_array});
     }
 
     handleStop(){
