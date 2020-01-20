@@ -12,7 +12,8 @@ import InputRange from 'react-input-range'
 import {get_animations_insertion_sort} from './InsertionSort.js';
 import {get_animations_bubble_sort} from './BubbleSort.js';
 import {quick_sort_hoare} from './QuickSortHoare.js';
-import {quick_sort_lomuto} from './QuickSortLomuto.js'
+import {quick_sort_lomuto} from './QuickSortLomuto.js';
+import {merge_sort} from './MergeSort.js';
 
 import './SortingVisualizer.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -32,7 +33,7 @@ export default class SortingVisualizer extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
-            array : [],
+            array : [13, 75, 14, 23, 9, 32, 8, 66, 34, 93],
             color : [],
             speed : 0.011,
             array_size : 10,
@@ -42,6 +43,7 @@ export default class SortingVisualizer extends React.Component{
     
     componentDidMount() {
         this.handleGeneration(this.state.array_size, ARRAY_MIN, ARRAY_MAX);
+        this.setState({array:[13, 75, 14, 23, 9, 32, 8, 66, 34, 93]})
     }
 
     render(){
@@ -67,6 +69,9 @@ export default class SortingVisualizer extends React.Component{
                 <Button className="mx-1 text-nowrap" 
                         onClick={() => this.handleQuickSortHoare()}
                         disabled={this.state.sorting}>Quick Sort (Hoare)</Button>
+                <Button className="mx-1 text-nowrap" 
+                        onClick={() => this.handleMergeSort()}
+                        disabled={this.state.sorting}>Merge Sort</Button>
 
             </Nav>
             </Navbar>
@@ -365,6 +370,17 @@ export default class SortingVisualizer extends React.Component{
             animations.length/this.state.speed
         );
 
+    }
+
+    handleMergeSort(){
+        this.setState({sorting: true});
+        this.resetColor();
+        
+        var current_array = this.state.array.slice();
+        var animations = [];
+        console.log(merge_sort(current_array, 0, current_array.length, animations));
+
+        this.setState({sorting: false})
     }
 
     handleStop(){
