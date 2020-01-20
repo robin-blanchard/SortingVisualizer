@@ -8,9 +8,9 @@ Demo : https://robblanchard.github.io/SortingVisualizer/
 
 TO DO:
 * Deploy GitHub page https://create-react-app.dev/docs/deployment/#github-pages DONE
-* Add other sorting algorithms
-    * Merge Sort
-    * Classic quick sort
+* Add other sorting algorithms DONE
+    * Merge Sort DONE
+    * Classic quick sort DONE
 * Modify Insertion Sort visualisation DONE
     * Add non-swapping comparison
     * Add changes to visualisation
